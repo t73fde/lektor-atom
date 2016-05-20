@@ -97,6 +97,9 @@ class AtomFeedBuilderProgram(BuildProgram):
                      'https://github.com/ajdavis/lektor-atom',
                      pkg_resources.get_distribution('lektor-atom').version)
 
+        project_id = ctx.env.load_config().base_url
+        if not project_id:
+            project_id = ctx.env.project.id
         feed = AtomFeed(
             title=feed_source.feed_name,
             subtitle=unicode(summary),
@@ -104,7 +107,7 @@ class AtomFeedBuilderProgram(BuildProgram):
             author=blog_author,
             feed_url=url_to(feed_source, external=True),
             url=url_to(blog, external=True),
-            id=get_id(ctx.env.project.id),
+            id=get_id(project_id),
             generator=generator)
 
         if feed_source.items:
@@ -131,7 +134,7 @@ class AtomFeedBuilderProgram(BuildProgram):
                 url=url_to(item, external=True),
                 content_type='html',
                 id=get_id(u'%s/%s' % (
-                    ctx.env.project.id,
+                    project_id,
                     item['_path'].encode('utf-8'))),
                 author=item_author,
                 updated=get_item_updated(item, feed_source.item_date_field))
